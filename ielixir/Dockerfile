@@ -18,6 +18,8 @@ RUN jupyterHome=$HOME/.ipython/kernels/ && \
     MIX_ENV=prod mix compile && \
     ./install_script.sh
 
+COPY ielixir/start_script.sh $HOME/IElixir
+
 VOLUME /notebooks
 WORKDIR /notebooks
 
