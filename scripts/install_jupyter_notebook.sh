@@ -3,15 +3,6 @@ set -e
 
 # https://hub.docker.com/r/jupyter/notebook/~/dockerfile/
 
-# Remove preinstalled copy of python that blocks our ability to install development python.
-DEBIAN_FRONTEND=noninteractive apt-get remove -yq \
-        python3-minimal \
-        python3.4 \
-        python3.4-minimal \
-        libpython3-stdlib \
-        libpython3.4-stdlib \
-        libpython3.4-minimal
-
 # Python binary and source dependencies
 apt-get update -qq && \
     DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
@@ -19,7 +10,6 @@ apt-get update -qq && \
         ca-certificates \
         curl \
         git \
-        language-pack-en \
         libcurl4-openssl-dev \
         libffi-dev \
         libsqlite3-dev \
