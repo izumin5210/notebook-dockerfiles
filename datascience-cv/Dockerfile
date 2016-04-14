@@ -2,22 +2,24 @@ FROM jupyter/datascience-notebook
 
 MAINTAINER izumin5210 <masayuki@izumin.info>
 
-RUN wget https://github.com/Itseez/opencv/archive/3.0.0.zip -O opencv3.zip \
-    && unzip -q opencv3.zip \
-    && mv opencv-3.0.0 opencv \
-    && rm opencv3.zip
-
-RUN wget https://github.com/Itseez/opencv_contrib/archive/3.0.0.zip -O opencv_contrib3.zip \
-    && unzip -q opencv_contrib3.zip \
-    && mv opencv_contrib-3.0.0 opencv_contrib \
-    && rm opencv_contrib3.zip
-
 USER root
 
 RUN apt-get update \
-    && apt-get install -y cmake
+    && apt-get install -y \
+        cmake \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir opencv/build \
+
+RUN wget https://github.com/Itseez/opencv/archive/3.0.0.zip -O opencv3.zip \
+    && unzip -q opencv3.zip \
+    && mv opencv-3.0.0 opencv \
+    && rm opencv3.zip \
+    && wget https://github.com/Itseez/opencv_contrib/archive/3.0.0.zip -O opencv_contrib3.zip \
+    && unzip -q opencv_contrib3.zip \
+    && mv opencv_contrib-3.0.0 opencv_contrib \
+    && rm opencv_contrib3.zip \
+    && mkdir opencv/build \
     && cd opencv/build \
     && cmake -D CMAKE_BUILD_TYPE=RELEASE \
           -D CMAKE_INSTALL_PREFIX=/usr/local \
@@ -46,15 +48,13 @@ RUN mkdir opencv/build \
           -D PYTHON_LIBRARY=/opt/conda/lib/libpython3.so \
           -D PYTHON3_PACKAGES_PATH=/opt/conda/lib/python3.5/site-packages \
           -D PYTHON3_NUMPY_INCLUDE_DIRS=/opt/conda/lib/python3.5/site-packages/numpy/core/include/ \
-          ..
-
-RUN cd opencv/build \
-    && make -j4
-RUN cd opencv/build \
-    && make install
-RUN sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf'
-RUN cd opencv/build \
-    && ldconfig
+          .. \
+    && make -j4 \
+    && make install \
+    && sh -c 'echo "/usr/local/lib" > /etc/ld.so.conf.d/opencv.conf' \
+    && ldconfig \
+    && cd ../.. \
+    && rm -rf opencv opencv_contrib
 
 ## Switch back to jupyter user
 USER jovyan
